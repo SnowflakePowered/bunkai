@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31423.177
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bunkai", "Bunkai\Bunkai.csproj", "{9352E5F3-58E0-48B2-838B-140C0C392C6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bunkai.Tests", "Bunkai.Tests\Bunkai.Tests.csproj", "{FC01F95E-50CB-4C32-89CC-84778AB841FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9352E5F3-58E0-48B2-838B-140C0C392C6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9352E5F3-58E0-48B2-838B-140C0C392C6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9352E5F3-58E0-48B2-838B-140C0C392C6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9352E5F3-58E0-48B2-838B-140C0C392C6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC01F95E-50CB-4C32-89CC-84778AB841FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC01F95E-50CB-4C32-89CC-84778AB841FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC01F95E-50CB-4C32-89CC-84778AB841FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC01F95E-50CB-4C32-89CC-84778AB841FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3407BFDB-973C-4105-AF51-F04B735DCB39}
+	EndGlobalSection
+EndGlobal

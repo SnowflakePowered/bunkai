@@ -1,0 +1,5 @@
+src/Bunkai.Tests/bin
+src/Bunkai.Tests/obj/
+src/Bunkai/obj/
+src/Bunkai/bin
+.vs/
