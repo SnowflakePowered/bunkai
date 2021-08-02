@@ -7,6 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="Pidgin" Version="2.5.0" />
+    <InternalsVisibleTo Include="Bunkai.Tests"/>
   </ItemGroup>
-
 </Project>

@@ -59,7 +59,7 @@ namespace Bunkai.Tags
         /// </summary>
         /// <param name="tag">The tag used to specify this version. </param>
         /// <param name="major">The major version.</param>
-        public VersionTag(string tag, string major) => (Tag, Major, Minor) = (tag, major, null);
+        public VersionTag(string tag, string major, TagCategory tagType) => (Tag, Major, Minor, Category) = (tag, major, null, tagType);
 
 
 

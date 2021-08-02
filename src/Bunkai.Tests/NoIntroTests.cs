@@ -1,4 +1,5 @@
 using Bunkai.Parsers;
+using Pidgin;
 using System;
 using Xunit;
 
@@ -23,10 +24,12 @@ namespace Bunkai.Tests
         {
             var parser = new NoIntroParser();
 
-            Assert.True(parser.TryParse("Seisen Chronicle (Japan) (eShop) [b]", out var voidTerx));
+
+            var res = NoIntroParser.ParseLanguageTag.Parse("(En)");
+            //Assert.True(parser.TryParse("Prince of Persia (Europe) ", out var voidTerx));
 
         }
-
+        
         [Theory]
         [InlineData("Super Mario Bros. 2 (USA)", "Super Mario Bros. 2", NamingConvention.NoIntro, "US")]
         [InlineData("Super Mario Bros. (USA)", "Super Mario Bros.", NamingConvention.NoIntro, "US")]

@@ -6,7 +6,27 @@ using System.Threading.Tasks;
 
 namespace Bunkai.Tags
 {
-    class MediaTag
+    public sealed record MediaTag
+        : RomTag
     {
+        public MediaTag(string mediaType, string number, string? total) => (MediaType, Number, Total, Category) = (mediaType, number, total, TagCategory.Parenthesized);
+        public MediaTag(string mediaType, string number) => (MediaType, Number, Category) = (mediaType, number, TagCategory.Parenthesized);
+
+        /// <summary>
+        /// The type of the media, i.e. 'Disc' or 'Cassette'
+        /// </summary>
+        public string MediaType { get; }
+
+        /// <summary>
+        /// The number of the media.
+        /// </summary>
+        public string Number { get; }
+
+        /// <summary>
+        /// The total number of parts of the media in the full collection.
+        /// </summary>
+        public string? Total { get; }
+
+        public override string Slug => "Media";
     }
 }

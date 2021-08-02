@@ -20,10 +20,7 @@ namespace Bunkai
         /// The title normalized according to the <a href="https://github.com/SnowflakePowered/shiratsu/blob/master/SPECIFICATION.md">shiratsu specification</a>.
         /// </summary>
         public string NormalizedTitle { get;  }
-        /// <summary>
-        /// An array of regions this game is associated with.
-        /// </summary>
-        public ImmutableArray<Region> Region { get; }
+
         /// <summary>
         /// Flags this game is associated with.
         /// </summary>
@@ -45,8 +42,8 @@ namespace Bunkai
         /// <param name="region">The regions as were parsed from the filename.</param>
         /// <param name="tags">The tags parsed from the filename.</param>
         /// <param name="rominfo">The info flags as were parsed from the filename, derived from the parsed tags.</param>
-        public NameInfo(NamingConvention convention, string entryTitle, ImmutableArray<Region> region, ImmutableArray<RomTag> tags, RomInfo rominfo)
-            => (NamingConvention, Title, Region, Tags, Info, NormalizedTitle) = (convention, entryTitle, region, tags, rominfo, NameInfo.NormalizeTitle(entryTitle));
+        public NameInfo(NamingConvention convention, string entryTitle, ImmutableArray<RomTag> tags, RomInfo rominfo)
+            => (NamingConvention, Title, Tags, Info, NormalizedTitle) = (convention, entryTitle, tags, rominfo, NameInfo.NormalizeTitle(entryTitle));
 
         private readonly static (int comma, string repl, Regex regex)[] ARTICLES =
         {
