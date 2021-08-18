@@ -53,14 +53,14 @@ namespace Bunkai.Tags
         /// <param name="major">The major version.</param>
         /// <param name="minor">The minor version.</param>
         /// <param name="tagType">The type of the tag.</param>
-        public VersionTag(string tag, string major, string minor, TagCategory tagType) => (Tag, Major, Minor, Category) = (tag, major, minor, tagType);
+        internal VersionTag(string tag, string major, string minor, TagCategory tagType) => (Tag, Major, Minor, Category) = (tag, major, minor, tagType);
 
         /// <summary>
         /// Intantiates a Version instance without a minor version.
         /// </summary>
         /// <param name="tag">The tag used to specify this version. </param>
         /// <param name="major">The major version.</param>
-        public VersionTag(string tag, string major, TagCategory tagType) => (Tag, Major, Minor, Category) = (tag, major, null, tagType);
+        internal VersionTag(string tag, string major, TagCategory tagType) => (Tag, Major, Minor, Category) = (tag, major, null, tagType);
 
         /// <summary>
         /// Intantiates a Version instance.
@@ -69,7 +69,7 @@ namespace Bunkai.Tags
         /// <param name="major">The major version.</param>
         /// <param name="minor">The minor version.</param>
         /// <param name="tagType">The type of the tag.</param>
-        public VersionTag(string tag, string major, string? minor, string? suffix, TagCategory tagType) => (Tag, Major, Minor, Suffixes, Category) = (tag, major, minor, suffix != null ? ImmutableArray.Create(suffix) : ImmutableArray<string>.Empty, tagType);
+        internal VersionTag(string tag, string major, string? minor, string? suffix, TagCategory tagType) => (Tag, Major, Minor, Suffixes, Category) = (tag, major, minor, suffix != null ? ImmutableArray.Create(suffix) : ImmutableArray<string>.Empty, tagType);
 
     }
 }

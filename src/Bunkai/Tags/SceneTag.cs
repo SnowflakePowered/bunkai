@@ -33,6 +33,6 @@ namespace Bunkai.Tags
         /// </summary>
         /// <param name="number">The number parsed.</param>
         /// <param name="prefix">Any optional type or prefix, such as x, z, or xB</param>
-        public SceneTag(string number, string? prefix) => (Number, Prefix, Category) = (number, prefix, TagCategory.None);
+        internal SceneTag(string number, string? prefix) => (Number, Prefix, Category) = (number, prefix, TagCategory.None);
     }
 }

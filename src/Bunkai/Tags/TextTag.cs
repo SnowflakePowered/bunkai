@@ -28,6 +28,6 @@ namespace Bunkai.Tags
         /// </summary>
         /// <param name="text">The value of the tag.</param>
         /// <param name="category">The category of the tag.</param>
-        public TextTag(string text, TagCategory category) => (Text, Category) = (text, category);
+        internal TextTag(string text, TagCategory category) => (Text, Category) = (text, category);
     }
 }

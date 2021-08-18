@@ -20,6 +20,6 @@ namespace Bunkai.Tags
 
         public override string Slug => "Language";
 
-        public LanguageTag(params Language[] languages) => (Languages, Category) = (languages.ToImmutableArray(), TagCategory.Parenthesized);
+        internal LanguageTag(params Language[] languages) => (Languages, Category) = (languages.ToImmutableArray(), TagCategory.Parenthesized);
     }
 }

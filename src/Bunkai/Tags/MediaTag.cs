@@ -9,8 +9,8 @@ namespace Bunkai.Tags
     public sealed record MediaTag
         : RomTag
     {
-        public MediaTag(string mediaType, string number, string? total) => (MediaType, Number, Total, Category) = (mediaType, number, total, TagCategory.Parenthesized);
-        public MediaTag(string mediaType, string number) => (MediaType, Number, Category) = (mediaType, number, TagCategory.Parenthesized);
+        internal MediaTag(string mediaType, string number, string? total) => (MediaType, Number, Total, Category) = (mediaType, number, total, TagCategory.Parenthesized);
+        internal MediaTag(string mediaType, string number) => (MediaType, Number, Category) = (mediaType, number, TagCategory.Parenthesized);
 
         /// <summary>
         /// The type of the media, i.e. 'Disc' or 'Cassette'

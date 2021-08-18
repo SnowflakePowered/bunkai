@@ -15,6 +15,6 @@ namespace Bunkai.Tags
 
         public override string Slug => "Region";
 
-        public RegionTag(params Region[] regions) => (Regions, Category) = (regions.ToImmutableArray(), TagCategory.Parenthesized);
+        internal RegionTag(params Region[] regions) => (Regions, Category) = (regions.ToImmutableArray(), TagCategory.Parenthesized);
     }
 }

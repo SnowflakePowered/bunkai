@@ -12,8 +12,7 @@ namespace Bunkai.Tags
     public sealed record MultiLanguageTag
         : RomTag
     {
-
-        public MultiLanguageTag(int languageCount) => (Count, Category) = (languageCount, TagCategory.Parenthesized);
+        internal MultiLanguageTag(int languageCount) => (Count, Category) = (languageCount, TagCategory.Parenthesized);
 
         public override string Slug => "MultiLanguage";
 

@@ -34,6 +34,6 @@ namespace Bunkai.Tags
         /// </summary>
         /// <param name="status">The status of the release.</param>
         /// <param name="meta">Meta information associated with the release.</param>
-        public ReleaseTag(string status, string? meta) => (Status, Meta, Category) = (status, meta, TagCategory.Parenthesized);
+        internal ReleaseTag(string status, string? meta) => (Status, Meta, Category) = (status, meta, TagCategory.Parenthesized);
     }
 }
