@@ -80,9 +80,18 @@ namespace Bunkai.Parsers
             ParseIsoLanguageCode.SeparatedAtLeastOnce(Char(',')).Map(s => (RomTag)new LanguageTag(s.Select(s => RegionMap.LANGUAGE_MAP[s.ToLowerInvariant()]).ToArray())));
 
         internal static readonly VersionParser ParseRevisionVersion = InParens(String("Rev ")
-            .Then(Map((major, minor) => minor.Match(minor => new VersionTag("Rev", major, minor, TagCategory.Parenthesized), () => new VersionTag("Rev", major, TagCategory.Parenthesized)),
+            .Then(Map((major, minor) => minor.Match(
+                                                    minor => new VersionTag("Rev", major, minor, TagCategory.Parenthesized), 
+                                                    () => new VersionTag("Rev", major, TagCategory.Parenthesized)),
+
                 LetterOrDigit.AtLeastOnceString(), Char('.').Then(LetterOrDigit.AtLeastOnceString()).Optional())));
 
+        internal static readonly VersionParser ParseSinglePrefixedVersion = InParens(String("v")
+            .Then(Map((major, minor, suffix) => new VersionTag("v", string.Concat(major), minor.GetValueOrDefault(), suffix.GetValueOrDefault(), TagCategory.Parenthesized),
+                Digit.AtLeastOnce(),
+                Char('.').Then(OneOf(LetterOrDigit, Char('.'), Char('-')).ManyString()).Optional(),
+                Char(' ').Then(String("Alt")).Optional()
+            )));
 
         //private static VersionParser ParseVersion = InParens(String("v")
         //                                .Or(String("Version "))

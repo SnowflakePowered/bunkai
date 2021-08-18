@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +39,7 @@ namespace Bunkai.Tags
         /// The version suffix, if any.
         /// This appears after the version number, separated by a space.
         /// </summary>
-        public string? Suffix { get; }
+        public ImmutableArray<string> Suffixes { get; } = ImmutableArray<string>.Empty;
 
         /// <summary>
         /// The type of the tag ("Version")
@@ -61,7 +62,14 @@ namespace Bunkai.Tags
         /// <param name="major">The major version.</param>
         public VersionTag(string tag, string major, TagCategory tagType) => (Tag, Major, Minor, Category) = (tag, major, null, tagType);
 
-
+        /// <summary>
+        /// Intantiates a Version instance.
+        /// </summary>
+        /// <param name="tag">The tag used to specify this version. </param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="tagType">The type of the tag.</param>
+        public VersionTag(string tag, string major, string? minor, string? suffix, TagCategory tagType) => (Tag, Major, Minor, Suffixes, Category) = (tag, major, minor, suffix != null ? ImmutableArray.Create(suffix) : ImmutableArray<string>.Empty, tagType);
 
     }
 }
