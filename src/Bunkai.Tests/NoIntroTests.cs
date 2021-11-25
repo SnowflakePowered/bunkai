@@ -12,11 +12,14 @@ namespace Bunkai.Tests
         public void TryParse_Test()
         {
             var parser = new NoIntroParser();
-            Assert.True(parser.TryParse("FIFA 20 - Portuguese (Brazil) In-Game Commentary (World)", out var fifa20));
-            Assert.True(parser.TryParse("Odekake Lester - Lelele no Le (^^; (Japan)", out var odekake));
-            Assert.True(parser.TryParse("void tRrLM(); Void Terrarium (Japan)", out var voidTer));
-            Assert.True(parser.TryParse("xB14 - [BIOS] void tRrLM(); Void Terrarium (Japan) (Multi Tap (SCPH-10090) Doukonban) (Tag)", out var voidTerx));
-            Assert.True(parser.TryParse("xB14 - [BIOS] void tRrLM(); Void Terrarium (Japan) (Multi Tap (SCPH-10090) Doukonban) (Tag) (Beta 2) (Proto 2)", out var voidTerxx));
+            //Assert.True(parser.TryParse("FIFA 20 - Portuguese (Brazil) In-Game Commentary (World)", out var fifa20));
+            //Assert.True(parser.TryParse("Odekake Lester - Lelele no Le (^^; (Japan)", out var odekake));
+            //Assert.True(parser.TryParse("void tRrLM(); Void Terrarium (Japan)", out var voidTer));
+            //Assert.True(parser.TryParse("xB14 - [BIOS] void tRrLM(); Void Terrarium (Japan) (Multi Tap (SCPH-10090) Doukonban) (Tag)", out var voidTerx));
+            //Assert.True(parser.TryParse("xB14 - [BIOS] void tRrLM(); Void Terrarium (Japan) (Multi Tap (SCPH-10090) Doukonban) (Tag) (Beta 2) (Proto 2)", out var voidTerxx));
+            Assert.True(parser.TryParse("Pachio-kun 3 (Japan) (Rev A)", out var rev));
+            Assert.True(parser.TryParse("Pachio-kun 3 (Japan) (v1.x)", out rev));
+            Assert.True(parser.TryParse("Pachio-kun 3 (Japan) (Version 10.5.1-56 A Alt)", out rev));
         }
 
         [Fact]

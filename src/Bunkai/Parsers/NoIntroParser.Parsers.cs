@@ -79,19 +79,44 @@ namespace Bunkai.Parsers
         internal static readonly TagParser ParseLanguageTag = InParens(
             ParseIsoLanguageCode.SeparatedAtLeastOnce(Char(',')).Map(s => (RomTag)new LanguageTag(s.Select(s => RegionMap.LANGUAGE_MAP[s.ToLowerInvariant()]).ToArray())));
 
-        internal static readonly VersionParser ParseRevisionVersion = InParens(String("Rev ")
+        internal static readonly VersionParser ParseRevisionVersion = String("Rev ")
             .Then(Map((major, minor) => minor.Match(
                                                     minor => new VersionTag("Rev", major, minor, TagCategory.Parenthesized), 
                                                     () => new VersionTag("Rev", major, TagCategory.Parenthesized)),
 
-                LetterOrDigit.AtLeastOnceString(), Char('.').Then(LetterOrDigit.AtLeastOnceString()).Optional())));
+                LetterOrDigit.AtLeastOnceString(), Char('.').Then(LetterOrDigit.AtLeastOnceString()).Optional()));
 
-        internal static readonly VersionParser ParseSinglePrefixedVersion = InParens(String("v")
+        internal static readonly VersionParser ParseSinglePrefixedVersion = String("v")
             .Then(Map((major, minor, suffix) => new VersionTag("v", string.Concat(major), minor.GetValueOrDefault(), suffix.GetValueOrDefault(), TagCategory.Parenthesized),
                 Digit.AtLeastOnce(),
                 Char('.').Then(OneOf(LetterOrDigit, Char('.'), Char('-')).ManyString()).Optional(),
                 Char(' ').Then(String("Alt")).Optional()
-            )));
+            ));
+
+
+        internal static readonly VersionParser ParseSinglePrefixedVersionWithFullSuffix = String("Version ")
+            .Then(Map((major, minor, suffix) => new VersionTag("Version", string.Concat(major), minor.GetValueOrDefault(), suffix.GetValueOrDefault(), TagCategory.Parenthesized),
+                Digit.AtLeastOnce(),
+                Char('.').Then(OneOf(LetterOrDigit, Char('.'), Char('-')).ManyString()).Optional(),
+                Char(' ').Then(
+                    OneOf(
+                        Try(String("Alt")),
+                        Try(Uppercase).Map(s => s.ToString())
+                        )
+                ).Many().Optional()
+            ));
+        internal static readonly VersionParser ParseUnprefixedDotVersion = 
+                Map((major, minor) => new VersionTag("", major.ToString(), minor.ToString(), TagCategory.Parenthesized),
+                    Digit,
+                    Char('.').Then(Digit)
+                   );
+
+        internal static readonly TagParser ParseVersionTag = InParens(OneOf(
+            Try(ParseSinglePrefixedVersion),
+            Try(ParseSinglePrefixedVersionWithFullSuffix),
+            Try(ParseRevisionVersion),
+            Try(ParseUnprefixedDotVersion)
+            ).Map(tag => (RomTag)tag));
 
         //private static VersionParser ParseVersion = InParens(String("v")
         //                                .Or(String("Version "))
@@ -100,7 +125,7 @@ namespace Bunkai.Parsers
 
         private static TagParser ParseKnownTags = Char(' ').Optional().Then(OneOf(
             Try(ParseLanguageTag),
-            // Try(ParseVersionTag),
+            Try(ParseVersionTag),
             Try(ParseReleaseTag),
             Try(ParseDiscTag),
             Try(ParseRedumpMultitapTag),

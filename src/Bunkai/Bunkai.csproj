@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pidgin" Version="2.5.0" />
-    <InternalsVisibleTo Include="Bunkai.Tests"/>
+    <PackageReference Include="Pidgin" Version="3.0.0" />
+    <InternalsVisibleTo Include="Bunkai.Tests" />
   </ItemGroup>
 </Project>

@@ -71,5 +71,14 @@ namespace Bunkai.Tags
         /// <param name="tagType">The type of the tag.</param>
         internal VersionTag(string tag, string major, string? minor, string? suffix, TagCategory tagType) => (Tag, Major, Minor, Suffixes, Category) = (tag, major, minor, suffix != null ? ImmutableArray.Create(suffix) : ImmutableArray<string>.Empty, tagType);
 
+        /// <summary>
+        /// Intantiates a Version instance.
+        /// </summary>
+        /// <param name="tag">The tag used to specify this version. </param>
+        /// <param name="major">The major version.</param>
+        /// <param name="minor">The minor version.</param>
+        /// <param name="tagType">The type of the tag.</param>
+        internal VersionTag(string tag, string major, string? minor, IEnumerable<string> suffixes, TagCategory tagType) => (Tag, Major, Minor, Suffixes, Category) = (tag, major, minor, suffixes.ToImmutableArray(), tagType);
+
     }
 }
