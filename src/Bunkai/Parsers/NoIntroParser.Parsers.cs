@@ -13,6 +13,8 @@ using StringParser = Pidgin.Parser<char, string>;
 using InfoFlagParser = Pidgin.Parser<char, Bunkai.RomInfo>;
 using VersionParser = Pidgin.Parser<char, Bunkai.Tags.VersionTag>;
 using TagParser = Pidgin.Parser<char, Bunkai.Tags.RomTag>;
+using ManyTagParser = Pidgin.Parser<char, System.Collections.Generic.IEnumerable<Bunkai.Tags.RomTag>>;
+
 using RegionParser = Pidgin.Parser<char, System.Collections.Generic.IEnumerable<Bunkai.Region>>;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -111,31 +113,32 @@ namespace Bunkai.Parsers
                     Char('.').Then(Digit)
                    );
 
-        internal static readonly TagParser ParseVersionTag = InParens(OneOf(
+        internal static readonly ManyTagParser ParseVersionTag = InParens(OneOf(
             Try(ParseSinglePrefixedVersion),
             Try(ParseSinglePrefixedVersionWithFullSuffix),
             Try(ParseRevisionVersion),
             Try(ParseUnprefixedDotVersion)
-            ).Map(tag => (RomTag)tag));
+            ).SeparatedAtLeastOnce(String(", ")).Map(tag => tag.Select(t => (RomTag)t)));
 
         //private static VersionParser ParseVersion = InParens(String("v")
         //                                .Or(String("Version "))
         //                                .Then(DecimalNum).
         //    .Then(DecimalNum).Map(v => new Version("Rev", v.ToString())));
 
-        private static TagParser ParseKnownTags = Char(' ').Optional().Then(OneOf(
-            Try(ParseLanguageTag),
+        private static ManyTagParser ParseKnownTags = Char(' ').Optional().Then(OneOf(
+            Try(ParseLanguageTag.AtLeastOnce()),
             Try(ParseVersionTag),
-            Try(ParseReleaseTag),
-            Try(ParseDiscTag),
-            Try(ParseRedumpMultitapTag),
-            Try(ParseAdditionalFlag)
+            Try(ParseReleaseTag.AtLeastOnce()),
+            Try(ParseDiscTag.AtLeastOnce()),
+            Try(ParseRedumpMultitapTag.AtLeastOnce()),
+            Try(ParseAdditionalFlag.AtLeastOnce())
             ));
 
         internal static readonly Parser<char, NameInfo> NameParser = from scene in ParseSceneTag.Optional()
-                                                                    from bios in ParseBiosTag.Optional()
-                                                                    from title in Any.AtLeastOnceUntil(Lookahead(Try(ParseRegionTagAndEnsureEnd))).Select(s => string.Concat(s))
-                                                                    from region in ParseRegionTagAndEnsureEnd
+                                                                     from bios in ParseBiosTag.Optional()
+                                                                     from title in Any.AtLeastOnceUntil(Lookahead(Try(ParseRegionTagAndEnsureEnd))).Select(s => string.Concat(s))
+                                                                     from region in ParseRegionTagAndEnsureEnd
+
                                                                     from restTags in Try(ParseKnownTags).Many()
                                                                     from badDump in Char(' ').Optional().Then(ParseBadDumpTag).Optional()
                                                                     let tags = MergeTags(restTags, bios, scene, Maybe.Just(region), badDump)

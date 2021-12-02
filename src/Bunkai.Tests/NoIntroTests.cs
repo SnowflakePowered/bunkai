@@ -19,7 +19,7 @@ namespace Bunkai.Tests
             //Assert.True(parser.TryParse("xB14 - [BIOS] void tRrLM(); Void Terrarium (Japan) (Multi Tap (SCPH-10090) Doukonban) (Tag) (Beta 2) (Proto 2)", out var voidTerxx));
             Assert.True(parser.TryParse("Pachio-kun 3 (Japan) (Rev A)", out var rev));
             Assert.True(parser.TryParse("Pachio-kun 3 (Japan) (v1.x)", out rev));
-            Assert.True(parser.TryParse("Pachio-kun 3 (Japan) (Version 10.5.1-56 A Alt)", out rev));
+            Assert.True(parser.TryParse("Pachio-kun 3 (Japan) (Version 10.5.1-56 A Alt, v124)", out rev));
         }
 
         [Fact]

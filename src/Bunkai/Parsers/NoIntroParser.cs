@@ -54,9 +54,9 @@ namespace Bunkai.Parsers
             return res.Success;
         }
 
-        private static ImmutableArray<RomTag> MergeTags(IEnumerable<RomTag> flags2, params Maybe<RomTag>[] flags)
+        private static ImmutableArray<RomTag> MergeTags(IEnumerable<IEnumerable<RomTag>> flags2, params Maybe<RomTag>[] flags)
         {
-            return flags.Where(h => h.HasValue).Select(h => h.Value).Concat(flags2).ToImmutableList().ToImmutableArray();
+            return flags.Where(h => h.HasValue).Select(h => h.Value).Concat(flags2.SelectMany(f => f)).ToImmutableList().ToImmutableArray();
         }
 
         private static RomInfo MergeInfoFlags(ImmutableArray<RomTag> flags)
