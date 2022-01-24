@@ -121,11 +121,6 @@ namespace Bunkai.Parsers
             Try(ParseUnprefixedDotVersion)
             ).SeparatedAtLeastOnce(String(", ")).Map(tag => tag.Select(t => (RomTag)t)));
 
-        //private static VersionParser ParseVersion = InParens(String("v")
-        //                                .Or(String("Version "))
-        //                                .Then(DecimalNum).
-        //    .Then(DecimalNum).Map(v => new Version("Rev", v.ToString())));
-
         private static ManyTagParser ParseKnownTags = Char(' ').Optional().Then(OneOf(
             Try(ParseLanguageTag.AtLeastOnce()),
             Try(ParseVersionTag),
@@ -137,7 +132,7 @@ namespace Bunkai.Parsers
 
         internal static readonly Parser<char, NameInfo> NameParser = from scene in ParseSceneTag.Optional()
                                                                      from bios in ParseBiosTag.Optional()
-                                                                     from title in Any.AtLeastOnceUntil(Lookahead(Try(ParseRegionTagAndEnsureEnd))).Select(s => string.Concat(s))
+                                                                     from title in TakeUntil(Try(ParseRegionTagAndEnsureEnd))
                                                                      from region in ParseRegionTagAndEnsureEnd
 
                                                                     from restTags in Try(ParseKnownTags).Many()
