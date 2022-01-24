@@ -41,6 +41,7 @@ namespace Bunkai.Parsers
                                                            .Concat(new[] { Try(String("World")),
                                                                 Try(String("Latin America")),
                                                                 Try(String("Scandinavia")) }));
+
         internal static readonly TagParser ParseAdditionalFlag = InParens(Any.AtLeastOnceUntil(Lookahead(Char(')')))
             .Select(cs => string.Concat(cs))).Map<RomTag>(s => new TextTag(s, TagCategory.Parenthesized));
 
