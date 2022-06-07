@@ -265,9 +265,12 @@ namespace Bunkai.Parsers
                                                                                        var preparser = (titleTags.Any(t => t is PublisherTag) 
                                                                                             || OneOf(ParseKnownTag, Try(ParseMoreInfoTextTag)).Parse(rest).Success)
                                                                                                 // case 1: publisher already parsed or is missing
-                                                                                                ? Char(' ').Optional().Then(OneOf(ParseKnownTag, Try(ParseParensTextTag))).Many()
+                                                                                                ? from regions in Char(' ').Optional().Then(Try(ParseRegionTag)).Optional()
+                                                                                                  from tags in Char(' ').Optional().Then(OneOf(ParseKnownTag, Try(ParseParensTextTag))).Many()
+                                                                                                  select tags
                                                                                                 // case 2: need to parse publisher (todo: properly parse publisher)
                                                                                                 : (from publisher in ParseParensTextTag
+                                                                                                   from regions in Char(' ').Optional().Then(Try(ParseRegionTag)).Optional()
                                                                                                    from tags in Char(' ').Optional().Then(ParseKnownTag).Many()
                                                                                                    select tags.Prepend(publisher));
 
