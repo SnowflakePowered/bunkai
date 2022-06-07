@@ -39,22 +39,22 @@ Bunkai is a work in progress and while not all features available in shiratsu-na
   - [x] Version
     - [x] `Rev` versions
     - [x] `v` versions
-    - [ ] Version in flag
+    - [x] Version in flag
   - [x] Title
     - [x] Degenerate titles missing demo or date
-    - [ ] Unexpected spaces
+    - [x] Unexpected spaces
   - [ ] Publisher
     - [x] by-publisher in Title if ZZZ-UNK
     - [x] by-publisher after tags if ZZZ-UNK    
-  - [ ] Region
+  - [x] Region
     - [ ] GoodTools region
-  - [ ] Language
-    - [ ] Multilanguage
-  - [ ] System
-  - [ ] Video
-  - [ ] Copyright
+  - [x] Language
+    - [x] Multilanguage
+  - [x] System
+  - [x] Video
+  - [x] Copyright
   - [ ] Media
-  - [ ] Devstatus
+  - [x] Devstatus
   - [ ] Dump info
   - [ ] More info
 - [ ] GoodTools

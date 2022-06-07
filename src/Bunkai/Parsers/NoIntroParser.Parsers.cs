@@ -65,7 +65,8 @@ namespace Bunkai.Parsers
             String("Disc ").Then(Digit).Map(d => (RomTag)new MediaTag("Disc", d.ToString()))
             );
 
-        internal static readonly RegionParser ParseRegionTag = InParens(RegionKey.Map(x => ParseRegion(x)).Separated(String(", "))).Map(x => x.SelectMany(r => r).Distinct());
+        internal static readonly RegionParser ParseRegionTag = InParens(RegionKey.Map(x => ParseRegion(x))
+            .Separated(String(", "))).Map(x => x.SelectMany(r => r).Distinct()).Assert(r => r.Any());
         internal static readonly TagParser ParseRegionTagAndEnsureEnd = ParseRegionTag.Before(OneOf(
                 Try(End),
                 Try(Lookahead(Char(' ').Then(
