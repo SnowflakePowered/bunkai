@@ -43,7 +43,7 @@ Bunkai is a work in progress and while not all features available in shiratsu-na
   - [x] Title
     - [x] Degenerate titles missing demo or date
     - [x] Unexpected spaces
-  - [ ] Publisher
+  - [x] Publisher
     - [x] by-publisher in Title if ZZZ-UNK
     - [x] by-publisher after tags if ZZZ-UNK    
   - [x] Region
@@ -53,10 +53,10 @@ Bunkai is a work in progress and while not all features available in shiratsu-na
   - [x] System
   - [x] Video
   - [x] Copyright
-  - [ ] Media
+  - [x] Media
   - [x] Devstatus
-  - [ ] Dump info
-  - [ ] More info
+  - [x] Dump info
+  - [x] More info
 - [ ] GoodTools
   - [ ] Region
   - [ ] Year

@@ -5,6 +5,7 @@ using static Pidgin.Parser<char, string>;
 using StringParser = Pidgin.Parser<char, string>;
 using System.IO;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 
 namespace Bunkai.Parsers
 {
@@ -35,6 +36,15 @@ namespace Bunkai.Parsers
                 return true;
             }
             return false;
+        }
+
+        public static RomInfo MergeRomInfo(IEnumerable<RomInfo> romInfos, RomInfo baseInfo = RomInfo.None)
+        {
+            foreach (var r in romInfos) 
+            {
+                baseInfo |= r;
+            }
+            return baseInfo;
         }
     }
 }

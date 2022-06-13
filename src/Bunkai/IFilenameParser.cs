@@ -3,7 +3,7 @@
 namespace Bunkai
 {
     /// <summary>
-    /// A parser for structured filename
+    /// A parser for a structured filename.
     /// </summary>
     public interface IFilenameParser
     {

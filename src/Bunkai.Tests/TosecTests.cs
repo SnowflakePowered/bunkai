@@ -17,7 +17,7 @@ namespace Bunkai.Tests
         [InlineData("Cube CD 20, The (40) - Testing v1.203 (demo) (2020)(SomePublisher)", "The Cube CD 20 (40) - Testing", NamingConvention.TheOldSchoolEmulationCenter)]
         [InlineData("Motocross & Pole Position (Starsoft - JVP)(PAL)[b1][possible unknown mode]", "Motocross & Pole Position", NamingConvention.TheOldSchoolEmulationCenter)]
         [InlineData("ZZZ-UNK-Tron 6 fun v0.15", "Tron 6 fun", NamingConvention.TheOldSchoolEmulationCenter)]
-        [InlineData("Bombsawa (Jumpman Selected levels)(19XX)(-)(JP)(ja)(PD)[cr3 +test][h][test flag]", "Bombsawa (Jumpman Selected levels)", NamingConvention.TheOldSchoolEmulationCenter)]
+        [InlineData("Bombsawa (Jumpman Selected levels)(19XX)(-)(JP)(ja)(PD)(Disc 2 of 3 Side B)[cr3 +test][h][test flag]", "Bombsawa (Jumpman Selected levels)", NamingConvention.TheOldSchoolEmulationCenter)]
         public void StructuredFilename_Tests(string filename, string title, NamingConvention convention)
         {
             var parser = new TosecParser();
@@ -28,6 +28,19 @@ namespace Bunkai.Tests
             //Assert.Equal(convention, structuredFilename.NamingConvention);
             //Assert.Equal(regioncode, nameInfo.Regio);
             Assert.Equal(title, nameInfo.NormalizedTitle);
+        }
+
+        [Fact]
+        public void ParseMediaTest()
+        {
+            var result = TosecParser.ParseMediaTag.Parse("(Disc 2)");
+            var rresult = TosecParser.ParseKnownDumpTags.Parse("[cr3 +test]");
+        }
+
+        [Fact]
+        public void ParseRegionTest()
+        {
+            var result = TosecParser.ParseRegionTag.Parse("(JP)(ja)");
         }
     }
 }

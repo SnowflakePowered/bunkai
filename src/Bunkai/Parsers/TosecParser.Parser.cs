@@ -15,6 +15,7 @@ using VersionParser = Pidgin.Parser<char, Bunkai.Tags.VersionTag>;
 using TagParser = Pidgin.Parser<char, Bunkai.Tags.RomTag>;
 using RegionParser = Pidgin.Parser<char, System.Collections.Generic.IEnumerable<Bunkai.Region>>;
 using ManyTagParser = Pidgin.Parser<char, System.Collections.Generic.IEnumerable<Bunkai.Tags.RomTag>>;
+using DumpTagParser = Pidgin.Parser<char, (Bunkai.Tags.RomTag, Bunkai.RomInfo)>;
 
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -92,7 +93,7 @@ namespace Bunkai.Parsers
         internal static readonly TagParser ParseMoreInfoTextTag = InBrackets(TakeUntil(Char(']')).Select(string.Concat)).Map(s => (RomTag)new TextTag(s, TagCategory.Parenthesized));
 
 
-        internal static readonly RegionParser ParseRegionTag = InParens(TakeUntil(Char(')'))).Map(regionString => ParseRegion(regionString).AsEnumerable()).Assert(e => e.Any());
+        internal static readonly RegionParser ParseRegionTag = InParens(Letter.Or(Char('-')).ManyString()).Map(regionString => ParseRegion(regionString).AsEnumerable()).Assert(e => e.Any());
 
         internal static readonly TagParser ParseMultilanguageTag = InParens(Map((_, digits) => (RomTag)new MultiLanguageTag(digits), String("M"), Digit.ManyString().Map(s => Int32.Parse(s))));
 
@@ -100,115 +101,147 @@ namespace Bunkai.Parsers
 
         internal static readonly TagParser ParseDoubleLanguageTag = InParens(Map((l1, l2) => (RomTag)new LanguageTag(RegionMap.LANGUAGE_MAP[l1], RegionMap.LANGUAGE_MAP[l2]),
             Lowercase.RepeatString(2), Lowercase.RepeatString(2)));
-        // todo: single, double language
 
+        internal static DumpTagParser DumpInfoParser(StringParser tagParser) => InBrackets(from tag in tagParser
+                                                                                       from index in Digit.AtLeastOnceString().Optional()
+                                                                                       from param in Char(' ').Then(TakeUntil(Char(']')).Select(s => string.Concat(s))).Optional()
+                                                                                       select ((RomTag)new TextTag(tag + index.GetValueOrDefault("") + param.Match(s => " " + s, () => ""), "Dumpflag", TagCategory.Bracketed), MatchDumpFlag(tag))
+                                                                                       );
+        internal static Parser<char, (IEnumerable<RomTag>, RomInfo)> ParseKnownDumpTags = from _ in Char(' ').Optional()
+                                                                                          from dumpinfos in OneOf(
+                                                                                              Try(DumpInfoParser(String("cr"))),
+                                                                                              Try(DumpInfoParser(String("f"))),
+                                                                                              Try(DumpInfoParser(String("h"))),
+                                                                                              Try(DumpInfoParser(String("m"))),
+                                                                                              Try(DumpInfoParser(String("p"))),
+                                                                                              Try(DumpInfoParser(String("t"))),
+                                                                                              Try(DumpInfoParser(String("tr"))),
+                                                                                              Try(DumpInfoParser(String("t"))),
+                                                                                              Try(DumpInfoParser(String("o"))),
+                                                                                              Try(DumpInfoParser(String("u"))),
+                                                                                              Try(DumpInfoParser(String("v"))),
+                                                                                              Try(DumpInfoParser(String("b"))),
+                                                                                              Try(DumpInfoParser(String("a"))),
+                                                                                              Try(DumpInfoParser(String("!")))).AtLeastOnce()
+                                                                                          select (dumpinfos.Select(d => d.Item1), MergeRomInfo(dumpinfos.Select(d => d.Item2)));
 
         // https://github.com/SnowflakePowered/shiratsu/blob/master/shiratsu-naming/src/naming/tosec/parsers.rs#L264
         // Bunkai doesn't care about the semantics of the system tag so it's just a texttag.
         internal static readonly TagParser ParseSystemTag = InParens(OneOf(
-            String("+2"),
-            String("+2a"),
-            String("+3"),
-            String("130XE"),
-            String("A1000"),
-            String("A1200"),
-            String("A1200-A4000"),
-            String("A2000"),
-            String("A2000-A3000"),
-            String("A2024"),
-            String("A2500-A3000UX"),
-            String("A3000"),
-            String("A4000"),
-            String("A4000T"),
-            String("A500"),
-            String("A500+"),
-            String("A500-A1000-A2000"),
-            String("A500-A1000-A2000-CDTV"),
-            String("A500-A1200"),
-            String("A500-A1200-A2000-A4000"),
-            String("A500-A2000"),
-            String("A500-A600-A2000"),
-            String("A570"),
-            String("A600"),
-            String("A600HD"),
-            String("AGA"),
-            String("AGA-CD32"),
-            String("Aladdin Deck Enhancer"),
-            String("CD32"),
-            String("CDTV"),
-            String("Computrainer"),
-            String("Doctor PC Jr."),
-            String("ECS"),
-            String("ECS-AGA"),
-            String("Executive"),
-            String("Mega ST"),
-            String("Mega-STE"),
-            String("OCS"),
-            String("OCS-AGA"),
-            String("ORCH80"),
-            String("Osbourne 1"),
-            String("PIANO90"),
-            String("PlayChoice-10"),
-            String("Plus4"),
-            String("Primo-A"),
-            String("Primo-A64"),
-            String("Primo-B"),
-            String("Primo-B64"),
-            String("Pro-Primo"),
-            String("ST"),
-            String("STE"),
-            String("STE-Falcon"),
-            String("TT"),
-            String("TURBO-R GT"),
-            String("TURBO-R ST"),
-            String("VS DualSystem"),
-            String("VS UniSystem")
+            Try(String("+2")),
+            Try(String("+2a")),
+            Try(String("+3")),
+            Try(String("130XE")),
+            Try(String("A1000")),
+            Try(String("A1200")),
+            Try(String("A1200-A4000")),
+            Try(String("A2000")),
+            Try(String("A2000-A3000")),
+            Try(String("A2024")),
+            Try(String("A2500-A3000UX")),
+            Try(String("A3000")),
+            Try(String("A4000")),
+            Try(String("A4000T")),
+            Try(String("A500")),
+            Try(String("A500+")),
+            Try(String("A500-A1000-A2000")),
+            Try(String("A500-A1000-A2000-CDTV")),
+            Try(String("A500-A1200")),
+            Try(String("A500-A1200-A2000-A4000")),
+            Try(String("A500-A2000")),
+            Try(String("A500-A600-A2000")),
+            Try(String("A570")),
+            Try(String("A600")),
+            Try(String("A600HD")),
+            Try(String("AGA")),
+            Try(String("AGA-CD32")),
+            Try(String("Aladdin Deck Enhancer")),
+            Try(String("CD32")),
+            Try(String("CDTV")),
+            Try(String("Computrainer")),
+            Try(String("Doctor PC Jr.")),
+            Try(String("ECS")),
+            Try(String("ECS-AGA")),
+            Try(String("Executive")),
+            Try(String("Mega ST")),
+            Try(String("Mega-STE")),
+            Try(String("OCS")),
+            Try(String("OCS-AGA")),
+            Try(String("ORCH80")),
+            Try(String("Osbourne 1")),
+            Try(String("PIANO90")),
+            Try(String("PlayChoice-10")),
+            Try(String("Plus4")),
+            Try(String("Primo-A")),
+            Try(String("Primo-A64")),
+            Try(String("Primo-B")),
+            Try(String("Primo-B64")),
+            Try(String("Pro-Primo")),
+            Try(String("ST")),
+            Try(String("STE")),
+            Try(String("STE-Falcon")),
+            Try(String("TT")),
+            Try(String("TURBO-R GT")),
+            Try(String("TURBO-R ST")),
+            Try(String("VS DualSystem")),
+            Try(String("VS UniSystem"))
             ).Map(s => (RomTag)new TextTag(s, "System", TagCategory.Parenthesized)));
 
         internal static readonly TagParser ParseVideoTag = InParens(OneOf(
-            String("CGA"),
-            String("EGA"),
-            String("HGC"),
-            String("MCGA"),
-            String("MDA"),
-            String("NTSC"),
-            String("NTSC-PAL"),
-            String("PAL"),
-            String("PAL-60"),
-            String("PAL-NTSC"),
-            String("SVGA"),
-            String("VGA"),
-            String("XGA")
+            Try(String("CGA")),
+            Try(String("EGA")),
+            Try(String("HGC")),
+            Try(String("MCGA")),
+            Try(String("MDA")),
+            Try(String("NTSC")),
+            Try(String("NTSC-PAL")),
+            Try(String("PAL")),
+            Try(String("PAL-60")),
+            Try(String("PAL-NTSC")),
+            Try(String("SVGA")),
+            Try(String("VGA")),
+            Try(String("XGA"))
             ).Map(s => (RomTag)new TextTag(s, "Video", TagCategory.Parenthesized)));
 
         internal static readonly TagParser ParseCopyrightTag = InParens(OneOf(
-            String("CW"),
-            String("CW-R"),
-            String("FW"),
-            String("GW"),
-            String("GW-R"),
-            String("LW"),
-            String("PD"),
-            String("SW"),
-            String("SW-R")
+            Try(String("CW")),
+            Try(String("CW-R")),
+            Try(String("FW")),
+            Try(String("GW")),
+            Try(String("GW-R")),
+            Try(String("LW")),
+            Try(String("PD")),
+            Try(String("SW")),
+            Try(String("SW-R"))
             ).Map(s => (RomTag)new TextTag(s, "Copyright", TagCategory.Parenthesized)));
 
         internal static readonly TagParser ParseDevStatusTag = InParens(OneOf(
-            String("alpha"),
-            String("beta"),
-            String("preview"),
-            String("pre-release"),
-            String("proto"),
+            Try(String("alpha")),
+            Try(String("beta")),
+            Try(String("preview")),
+            Try(String("pre-release")),
+            Try(String("proto")),
 
             // these are malformed but acceptable.
             // see https://github.com/SnowflakePowered/shiratsu/blob/master/shiratsu-naming/src/naming/tosec/parsers.rs#L57 for strict parsing.
-            String("Alpha"),
-            String("Beta"),
-            String("Preview"),
-            String("Pre-Release"),
-            String("Proto"),
-            String("Prototype")
+            Try(String("Alpha")),
+            Try(String("Beta")),
+            Try(String("Preview")),
+            Try(String("Pre-Release")),
+            Try(String("Proto")),
+            Try(String("Prototype"))
             )).Map(s => (RomTag)new ReleaseTag(s, null));
+
+        internal static readonly TagParser ParseMediaTag = InParens(Map((type, part, total, side) => (RomTag)new MediaTag(type, part, total.GetValueOrDefault(), side.GetValueOrDefault()),
+          OneOf(
+              Try(String("Disk")),
+              Try(String("Disc")),
+              Try(String("File")),
+              Try(String("Part")),
+              Try(String("Side"))).Before(Char(' ')),
+          LetterOrDigit.Or(Char('-')).AtLeastOnceString(),
+          String(" of ").Then(LetterOrDigit.Or(Char('-')).AtLeastOnceString()).Optional(),
+          String(" Side ").Then(LetterOrDigit.AtLeastOnceString()).Optional()));
 
         internal static readonly TagParser ParseKnownTag = OneOf(
             Try(ParseMultilanguageTag),
@@ -217,13 +250,13 @@ namespace Bunkai.Parsers
             Try(ParseSystemTag),
             Try(ParseVideoTag),
             Try(ParseCopyrightTag),
-            // todo: media
+            Try(ParseMediaTag),
             // todo: goodtools region
             Try(ParseDevStatusTag),
             Try(ParseVersionTag)
             );
 
-
+    
         internal static readonly Parser<char, NameInfo> NameParser = from zzz in ParseZZZUnk.Optional() // ZZZ-UNK- is just ignored.
                                                                                    from res in OneOf(Try(HappyPathTitleParser),
                                                                                                      Try(DegeneratePathTitleParser),
@@ -257,36 +290,48 @@ namespace Bunkai.Parsers
                                                                                                 })
                                                                                    let title = res.title
                                                                                    let titleTags = res.tags
-                                                                                   let _ = Char(' ').Optional() // possible unexpected space
+                                                                                   from _0 in Char(' ').SkipMany().Optional() // possible unexpected space
 
 
                                                                                    from rest in Any.ManyString().Map(rest =>
                                                                                    {
-                                                                                       var preparser = (titleTags.Any(t => t is PublisherTag) 
+                                                                                       var preparser = (titleTags.Any(t => t is PublisherTag)
                                                                                             || OneOf(ParseKnownTag, Try(ParseMoreInfoTextTag)).Parse(rest).Success)
                                                                                                 // case 1: publisher already parsed or is missing
-                                                                                                ? from regions in Char(' ').Optional().Then(Try(ParseRegionTag)).Optional()
-                                                                                                  from tags in Char(' ').Optional().Then(OneOf(ParseKnownTag, Try(ParseParensTextTag))).Many()
-                                                                                                  select tags
-                                                                                                // case 2: need to parse publisher (todo: properly parse publisher)
-                                                                                                : (from publisher in ParseParensTextTag
-                                                                                                   from regions in Char(' ').Optional().Then(Try(ParseRegionTag)).Optional()
-                                                                                                   from tags in Char(' ').Optional().Then(ParseKnownTag).Many()
-                                                                                                   select tags.Prepend(publisher));
-
+                                                                                                ? from _0 in Char(' ').Optional()
+                                                                                                  from regions in Try(ParseRegionTag).Optional()
+                                                                                                  from _1 in Char(' ').Optional()
+                                                                                                  from tags in OneOf(ParseKnownTag, Try(ParseParensTextTag)).Many()
+                                                                                                  from dumpinfos in Try(ParseKnownDumpTags).Optional()
+                                                                                                  from bracktags in Try(ParseMoreInfoTextTag).Many().Optional()
+                                                                                                  let dumpinfo_res = dumpinfos.GetValueOrDefault((Enumerable.Empty<RomTag>(), RomInfo.None))
+                                                                                                  let bracktags_res = bracktags.GetValueOrDefault(Enumerable.Empty<RomTag>())
+                                                                                                  let final_tags = regions.Match(r => new[] { new RegionTag(r.ToArray()) }, () => Enumerable.Empty<RomTag>()).Concat(tags)
+                                                                                                    .Concat(dumpinfo_res.Item1)
+                                                                                                    .Concat(bracktags_res)
+                                                                                                  select (tags: final_tags, info: dumpinfo_res.Item2)
+                                                                                                // case 2: need to parse publisher, unlike shiratsu-naming all the publishers get mushed into one.
+                                                                                                : (from publisher in InParens(LetterOrDigit.Or(Char('-')).AtLeastOnceString()).Map(publisher => new PublisherTag(publisher, TagCategory.Parenthesized))
+                                                                                                   from _ in Char(' ').SkipMany().Optional()
+                                                                                                   from regions in Try(ParseRegionTag).Optional()
+                                                                                                   from tags in Try(Char(' ').Optional().Then(ParseKnownTag)).Many()
+                                                                                                   from dumpinfos in Try(ParseKnownDumpTags).Optional()
+                                                                                                   from bracktags in Try(ParseMoreInfoTextTag).Many().Optional()
+                                                                                                   let dumpinfo_res = dumpinfos.GetValueOrDefault((Enumerable.Empty<RomTag>(), RomInfo.None))
+                                                                                                   let bracktags_res = bracktags.GetValueOrDefault(Enumerable.Empty<RomTag>())
+                                                                                                   let final_tags = regions.Match(r => new[] { new RegionTag(r.ToArray()) }, () => Enumerable.Empty<RomTag>())
+                                                                                                    .Concat(tags.Prepend(publisher))
+                                                                                                    .Concat(dumpinfo_res.Item1)
+                                                                                                    .Concat(bracktags_res)
+                                                                                                   select (tags: final_tags, info: dumpinfo_res.Item2));
 
                                                                                        return preparser.Parse(rest);
                                                                                    })
-
                                                                                    
-                                                                     select new NameInfo(NamingConvention.TheOldSchoolEmulationCenter, title.Trim(), titleTags.Concat(rest
-                                                                        .GetValueOrDefault(Enumerable.Empty<RomTag>())).ToImmutableArray(), RomInfo.None);
+                                                                                   let result = rest.GetValueOrDefault((Enumerable.Empty<RomTag>(), RomInfo.None))
+                                                                                   let finalTags = titleTags.Concat(result.tags).ToImmutableArray()
+                                                                     select new NameInfo(NamingConvention.TheOldSchoolEmulationCenter, title.Trim(), finalTags, CombineRomInfo(finalTags, result.info));
 
-        public bool TryParse(string filename, [NotNullWhen(true)] out NameInfo? nameInfo)
-        {
-            var res = NameParser.Parse(filename);
-            nameInfo = res.Success ? res.Value : null;
-            return res.Success;
-        }
+
     }
 }
